@@ -18,7 +18,7 @@ public class Browser {
     private static final FirefoxBinary binary = binary();
 
     public static WebDriver Driver = null;
-
+    
     /**
      * PhantomJSDriver settings/capabilities
      * @return
@@ -68,7 +68,7 @@ public class Browser {
      * @return
      */
     public static void initialize() {
-
+    	
         boolean headless = false;
         if(headless) {
             Driver =  new FirefoxDriver(binary, profile); System.err.println("headless");
@@ -77,7 +77,7 @@ public class Browser {
         } else {
             Driver = new FirefoxDriver(binary, profile); System.err.println("headless");
         }
-        //Pages.initialize(); //TODO: Make Pages.initialize() invoke Browser.initialize()
+        
     }
 
     public static void open(final String url) {

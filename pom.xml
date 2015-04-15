@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dk.magenta.share.selenium</groupId>
-	<artifactId>framework</artifactId>
+	<artifactId>magenta-selenium-framework</artifactId>
 	<packaging>jar</packaging>
 	<version>0.1-SNAPSHOT</version>
-	<name>framework</name>
+	<name>magenta-selenium-framework</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
@@ -21,4 +21,17 @@
 		</dependency>
 
 	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>Alfresco-RELEASES</id>
+			<url>http://nexus.magenta-aps.dk/nexus/content/repositories/Alfresco-RELEASES</url>
+		</repository>
+		<snapshotRepository>
+			<id>Alfresco-SNAPSHOTS</id>
+			<url>http://nexus.magenta-aps.dk/nexus/content/repositories/Alfresco-SNAPSHOTS</url>
+		</snapshotRepository>
+
+	</distributionManagement>
+
 </project>
