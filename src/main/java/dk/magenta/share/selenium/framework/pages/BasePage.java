@@ -12,87 +12,88 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertNotNull;
 
-
 /**
- * All pages must extend this base page to share type
- * and have basic shared configurations
+ * All pages must extend this base page to share type and have basic shared
+ * configurations
+ * 
  * @author Søren Kirkegård
  *
  */
 public abstract class BasePage {
 
-    public static final String BASE_URL = "http://localhost:8081/share";
+	public static final String BASE_URL = "http://localhost:8081/share";
 
+	/**
+	 * Headermenu item "Cases"
+	 */
+	@FindBy(id = "HEADER_CASES_DROPDOWN_text")
+	WebElement headerCaseMenu;
 
-    /**
-     * Headermenu item "Cases"
-     */
-    @FindBy(id = "HEADER_CASES_DROPDOWN_text")
-    WebElement headerCaseMenu;
+	/*
+	 * Find the case ID from the URL with the new /page/oe/case/<id>/page scheme
+	 */
+	public String getCaseId() {
+		Pattern p = Pattern.compile("\\/oe\\/case\\/(.+)/");
+		Matcher matcher = p.matcher(Browser.Driver.getCurrentUrl());
+		if (matcher.find()) {
+			return matcher.group(1);
+		} else {
+			return null;
+		}
 
-    /*
-     * Find the case ID from the URL with the new /page/oe/case/<id>/page scheme
-     */
-    public String getCaseId() {
-        Pattern p = Pattern.compile("\\/oe\\/case\\/(.+)/");
-        Matcher matcher = p.matcher(Browser.Driver.getCurrentUrl());
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else {
-            return null;
-        }
+	}
 
-    }
+	// TODO make it take an enum that represents the values
+	public void clickCasesMenuItem() {
+		assertNotNull(headerCaseMenu);
+		headerCaseMenu.click();
+	}
 
-    //TODO make it take an enum that represents the values
-    public void clickCasesMenuItem() {
-        assertNotNull(headerCaseMenu);
-        headerCaseMenu.click();
-    }
+	@FindBy(id = "CASE_MENU_SEARCH_LINK_text")
+	WebElement searchLinkItem;
 
-    @FindBy(id = "CASE_MENU_SEARCH_LINK_text")
-    WebElement searchLinkItem;
+	public void clickCasesMenuSearchItem() {
+		assertNotNull(searchLinkItem);
+		searchLinkItem.click();
+	}
 
-    public void clickCasesMenuSearchItem() {
-        assertNotNull(searchLinkItem);
-        searchLinkItem.click();
-    }
+	@FindBy(id = "CASE_MENU_CREATE_CASE_CASE_SIMPLE_text")
+	WebElement createSimpleCaseItem;
 
-    @FindBy(id = "CASE_MENU_CREATE_CASE_CASE_SIMPLE_text")
-    WebElement createSimpleCaseItem;
+	public void clickCreateSimpleCaseItem() {
+		assertNotNull(createSimpleCaseItem);
+		createSimpleCaseItem.click();
+	}
 
-    public void clickCreateSimpleCaseItem() {
-        assertNotNull(createSimpleCaseItem);
-        createSimpleCaseItem.click();
-    }
+	public static void selectAuthoritiesInPicker(String id,
+			List<String> authorities) {
 
-    public static void selectAuthoritiesInPicker(String id,
-                                                  List<String> authorities) {
+		WebElement searchInput = Browser.Driver
+				.findElement(By
+						.xpath("//div[div[span[@role='heading' and (text()='Select...'  ) ]] and contains(@class,'alfresco-dialog-AlfDialog') ]//input[@name='searchTerm']"));
+		WebElement searchButton = Browser.Driver
+				.findElement(By
+						.xpath("//span[contains(@class,'confirmationButton')]/span[contains(@class,'dijitButtonNode')]"));
+		for (String authority : authorities) {
+			searchInput.clear();
+			searchInput.sendKeys(authority);
+			searchButton.click();
+			// Wonderfully complicated XPath way to get the Add button for
+			// adding the particular authority we want to add.
+			WebElement addAuthority = Browser.Driver
+					.findElement(By
+							.xpath("//td[contains(@class, 'yui-dt-col-name') and "
+									+ "contains(., "
+									+ "'"
+									+ authority
+									+ "')]/following-sibling::td[contains(@class, 'yui-dt-col-add')]/descendant::a"));
+			addAuthority.click();
+		}
 
-        WebElement searchInput = Browser.Driver.findElement(By.cssSelector(
-                "input[id$='" + id + "-cntrl-picker-searchText']"));
+		WebElement authorityPickerOkButton = Browser.Driver.findElement(By
+				.cssSelector("button[id$='" + id + "-cntrl-ok-button']"));
+		authorityPickerOkButton.click();
 
-        WebElement searchButton = Browser.Driver.findElement(By.cssSelector(
-                "button[id$='" + id + "-cntrl-picker-searchButton-button']"));
-        for (String authority : authorities) {
-            searchInput.clear();
-            searchInput.sendKeys(authority);
-            searchButton.click();
-            // Wonderfully complicated XPath way to get the Add button for
-            // adding the particular authority we want to add.
-            WebElement addAuthority = Browser.Driver.findElement(By
-                    .xpath("//td[contains(@class, 'yui-dt-col-name') and " +
-                            "contains(., " +
-                            "'" + authority + "')]/following-sibling::td[contains(@class, 'yui-dt-col-add')]/descendant::a"));
-            addAuthority.click();
-        }
-
-        WebElement authorityPickerOkButton = Browser.Driver.findElement(By
-                .cssSelector("button[id$='" + id + "-cntrl-ok-button']"));
-        authorityPickerOkButton.click();
-
-
-
-    }
+	}
 
 }
