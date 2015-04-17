@@ -1,10 +1,17 @@
 package dk.magenta.share.selenium.framework;
 
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 /**
@@ -13,7 +20,9 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *
  */
 public class Browser {
-
+	
+	private final static int NUM_SECS_WAIT_FOR_ALERT = 5;
+	private final static int NUM_SECS_WAIT_FOR_ELEM_DISPLAY = 3;
     private static final FirefoxProfile profile = profile();
     private static final FirefoxBinary binary = binary();
 
@@ -91,5 +100,73 @@ public class Browser {
     public static String title() {
         return Driver.getTitle();
     }
+    
+    public static void waitForAlert() {
+		waitForAlert(NUM_SECS_WAIT_FOR_ALERT);
+	}
+
+	public static void waitForAlert(int numSec) {
+		int i = 0;
+		while (i++ < numSec) {
+			try {
+				Alert alert = Driver.switchTo().alert();
+				break;
+			} catch (NoAlertPresentException e) {
+				try {
+					Thread.sleep(1000);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					return;
+				}
+				continue;
+			}
+		}
+	}
+
+	public static boolean waitForElementDisplayStatus(WebElement element,
+			boolean displayStatus, int numSec) {
+
+		int i = 0;
+		while (i++ < numSec && element.isDisplayed() != displayStatus) {
+			try {
+				Thread.sleep(1000);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				return false;
+			}
+			continue;
+		}
+
+		return element.isDisplayed() == displayStatus;
+	}
+
+	public static boolean waitForElementToBeDisplayed(WebElement element) {
+		return waitForElementDisplayStatus(element, true,
+				NUM_SECS_WAIT_FOR_ELEM_DISPLAY);
+	}
+
+	public static boolean waitForElementToDisapear(WebElement element) {
+		return waitForElementDisplayStatus(element, false,
+				NUM_SECS_WAIT_FOR_ELEM_DISPLAY);
+	}
+
+	public static boolean waitForPageToLoad() {
+		ExpectedCondition<Boolean> pageLoad = new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return ((JavascriptExecutor) driver).executeScript(
+						"return document.readyState").equals("complete");
+			}
+		};
+
+		Wait<WebDriver> wait = new WebDriverWait(Driver, 60);
+		try {
+			wait.until(pageLoad);
+			return true;
+		} catch (Throwable pageLoadWaitError) {
+			return false;
+		}
+
+	}
+    
 
 }
