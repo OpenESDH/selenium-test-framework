@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public abstract class BasePage {
 
-	public static final String BASE_URL = "http://localhost:8080/share";
+	public static final String BASE_URL = "http://localhost:8081/share";
 
 	/**
 	 * Headermenu item "Cases"
